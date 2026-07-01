@@ -1,0 +1,18 @@
+<%% content_for :title, "New <%= human_name %>" %>
+
+<section class="<%= singular_table_name.dasherize %>-new">
+  <h1>New <%= human_name %></h1>
+
+  <%%= render "form", <%= singular_table_name %>: @<%= singular_table_name %> %>
+
+  <br>
+
+  <div>
+    <%%= link_to "Back to <%= plural_table_name.humanize.downcase %>",
+          <%= index_helper %>_path,
+          data: { turbo: false },
+          "hx-get": <%= index_helper %>_path,
+          "hx-target": "body",
+          "hx-swap": "innerHTML" %>
+  </div>
+</section>

@@ -1,0 +1,25 @@
+<%% content_for :title, "<%= human_name.pluralize %>" %>
+
+<section class="<%= plural_table_name.dasherize %>-index">
+  <header class="page-header">
+    <h1><%= human_name.pluralize %></h1>
+
+    <%%= link_to "New <%= human_name %>",
+          new_<%= singular_route_name %>_path,
+          data: { turbo: false },
+          "hx-get": new_<%= singular_route_name %>_path,
+          "hx-target": "#<%= singular_table_name %>_form",
+          "hx-swap": "innerHTML",
+          class: "button" %>
+  </header>
+
+  <%%= render "shared/htmx_flash" %>
+
+  <div id="<%= singular_table_name %>_form" class="form-container"></div>
+
+  <div id="<%= plural_table_name %>" class="<%= plural_table_name.dasherize %>-collection">
+    <%% @<%= plural_table_name %>.each do |<%= singular_table_name %>| %>
+      <%%= render <%= singular_table_name %> %>
+    <%% end %>
+  </div>
+</section>

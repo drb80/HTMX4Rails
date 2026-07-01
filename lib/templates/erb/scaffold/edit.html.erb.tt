@@ -1,0 +1,25 @@
+<%% content_for :title, "Editing <%= human_name %>" %>
+
+<section class="<%= singular_table_name.dasherize %>-edit">
+  <h1>Editing <%= human_name %></h1>
+
+  <%%= render "form", <%= singular_table_name %>: @<%= singular_table_name %> %>
+
+  <br>
+
+  <div>
+    <%%= link_to "Show this <%= singular_table_name.humanize.downcase %>",
+          @<%= singular_table_name %>,
+          data: { turbo: false },
+          "hx-get": <%= singular_route_name %>_path(@<%= singular_table_name %>),
+          "hx-target": "#<%= singular_table_name %>_details",
+          "hx-swap": "innerHTML" %>
+    |
+    <%%= link_to "Back to <%= plural_table_name.humanize.downcase %>",
+          <%= index_helper %>_path,
+          data: { turbo: false },
+          "hx-get": <%= index_helper %>_path,
+          "hx-target": "body",
+          "hx-swap": "innerHTML" %>
+  </div>
+</section>

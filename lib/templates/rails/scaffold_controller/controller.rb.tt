@@ -1,0 +1,74 @@
+<% if namespaced? -%>
+require_relative "<%= require_path %>"
+
+<% end -%>
+class <%= class_name.pluralize %>Controller < ApplicationController
+  before_action :set_<%= singular_table_name %>, only: %i[ show edit update destroy ]
+
+  # GET <%= route_url %>
+  def index
+    @<%= plural_table_name %> = <%= class_name %>.all
+  end
+
+  # GET <%= route_url %>/1
+  def show
+  end
+
+  # GET <%= route_url %>/new
+  def new
+    @<%= singular_table_name %> = <%= class_name %>.new
+  end
+
+  # GET <%= route_url %>/1/edit
+  def edit
+  end
+
+  # POST <%= route_url %>
+  def create
+    @<%= singular_table_name %> = <%= class_name %>.new(<%= singular_table_name %>_params)
+
+    if @<%= singular_table_name %>.save
+      if request.headers["HX-Request"]
+        render partial: "<%= singular_table_name %>", locals: { <%= singular_table_name %>: @<%= singular_table_name %> }, status: :created
+      else
+        redirect_to @<%= singular_table_name %>, notice: "<%= human_name %> was successfully created."
+      end
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  # PATCH/PUT <%= route_url %>/1
+  def update
+    if @<%= singular_table_name %>.update(<%= singular_table_name %>_params)
+      if request.headers["HX-Request"]
+        render partial: "<%= singular_table_name %>", locals: { <%= singular_table_name %>: @<%= singular_table_name %> }
+      else
+        redirect_to @<%= singular_table_name %>, notice: "<%= human_name %> was successfully updated."
+      end
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE <%= route_url %>/1
+  def destroy
+    @<%= singular_table_name %>.destroy!
+
+    if request.headers["HX-Request"]
+      head :ok
+    else
+      redirect_to <%= index_helper %>_path, notice: "<%= human_name %> was successfully destroyed."
+    end
+  end
+
+  private
+
+  def set_<%= singular_table_name %>
+    @<%= singular_table_name %> = <%= class_name %>.find(params[:id])
+  end
+
+  def <%= singular_table_name %>_params
+    params.require(:<%= singular_table_name %>).permit(<%= attributes_names.map { |name| ":#{name}" }.join(", ") %>)
+  end
+end

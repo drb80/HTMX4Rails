@@ -1,0 +1,31 @@
+<%% content_for :title, "<%= human_name %>" %>
+
+<section id="<%%= dom_id @<%= singular_table_name %>, :details %>" class="<%= singular_table_name.dasherize %>-details">
+  <%%= render @<%= singular_table_name %> %>
+
+  <nav class="record-navigation">
+    <%%= link_to "Edit this <%= singular_table_name.humanize.downcase %>",
+          edit_<%= singular_route_name %>_path(@<%= singular_table_name %>),
+          data: { turbo: false },
+          "hx-get": edit_<%= singular_route_name %>_path(@<%= singular_table_name %>),
+          "hx-target": "#<%= singular_table_name %>_form",
+          "hx-swap": "innerHTML" %>
+
+    <%%= link_to "Back to <%= plural_table_name.humanize.downcase %>",
+          <%= index_helper %>_path,
+          data: { turbo: false },
+          "hx-get": <%= index_helper %>_path,
+          "hx-target": "body",
+          "hx-swap": "innerHTML" %>
+
+    <%%= button_to "Destroy this <%= singular_table_name.humanize.downcase %>",
+          @<%= singular_table_name %>,
+          method: :delete,
+          form: {
+            data: { turbo: false },
+            "hx-target": "#<%= singular_table_name %>_details",
+            "hx-swap": "innerHTML",
+            "hx-confirm": "Are you sure?"
+          } %>
+  </nav>
+</section>

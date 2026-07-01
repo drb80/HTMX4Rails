@@ -1,0 +1,83 @@
+require "application_system_test_case"
+
+class <%= class_name %>SystemTest < ApplicationSystemTestCase
+  setup do
+    @<%= singular_table_name %> = <%= table_name %>(:one)
+  end
+
+  test "visiting the index" do
+    visit <%= index_helper %>_url
+    assert_selector "h1", text: "<%= human_name.pluralize %>"
+  end
+
+  test "should create <%= singular_table_name %>" do
+    visit <%= index_helper %>_url
+    click_on "New <%= human_name %>"
+
+    # Wait for the form to be loaded by htmx
+    assert_selector "form"
+
+<% attributes.each do |attribute| -%>
+  <% if attribute.field_type == :date_field -%>
+    fill_in "<%= attribute.human_name %>", with: @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% elsif attribute.field_type == :datetime_select -%>
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.year.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(1i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.month.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(2i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.day.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(3i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.hour.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(4i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.min.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(5i)]"
+  <% elsif attribute.field_type == :time_select -%>
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.hour.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(1i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.min.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(2i)]"
+  <% elsif attribute.field_type == :text_area -%>
+    fill_in "<%= attribute.human_name %>", with: @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% elsif attribute.field_type == :boolean -%>
+    check "<%= singular_table_name %>[<%= attribute.column_name %>]" if @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% else -%>
+    fill_in "<%= attribute.human_name %>", with: @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% end -%>
+<% end -%>
+    click_on "Create <%= human_name %>"
+
+    assert_text "<%= human_name %> was successfully created"
+  end
+
+  test "should update <%= singular_table_name %>" do
+    visit <%= singular_route_name %>_url(@<%= singular_table_name %>)
+    click_on "Edit this <%= singular_table_name.humanize.downcase %>", match: :first
+
+    # Wait for the form to be loaded by htmx
+    assert_selector "form"
+
+<% attributes.each do |attribute| -%>
+  <% if attribute.field_type == :date_field -%>
+    fill_in "<%= attribute.human_name %>", with: @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% elsif attribute.field_type == :datetime_select -%>
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.year.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(1i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.month.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(2i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.day.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(3i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.hour.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(4i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.min.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(5i)]"
+  <% elsif attribute.field_type == :time_select -%>
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.hour.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(1i)]"
+    select @<%= singular_table_name %>.<%= attribute.column_name %>.min.to_s, from: "<%= singular_table_name %>[<%= attribute.column_name %>(2i)]"
+  <% elsif attribute.field_type == :text_area -%>
+    fill_in "<%= attribute.human_name %>", with: @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% elsif attribute.field_type == :boolean -%>
+    check "<%= singular_table_name %>[<%= attribute.column_name %>]" if @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% else -%>
+    fill_in "<%= attribute.human_name %>", with: @<%= singular_table_name %>.<%= attribute.column_name %>
+  <% end -%>
+<% end -%>
+    click_on "Update <%= human_name %>"
+
+    assert_text "<%= human_name %> was successfully updated"
+  end
+
+  test "should destroy <%= singular_table_name %>" do
+    visit <%= singular_route_name %>_url(@<%= singular_table_name %>)
+    click_on "Destroy this <%= singular_table_name.humanize.downcase %>", match: :first
+
+    assert_text "<%= human_name %> was successfully destroyed"
+  end
+end

@@ -1,0 +1,28 @@
+<article id="<%%= dom_id <%= singular_table_name %> %>" class="<%= singular_table_name.dasherize %>-item">
+  <div class="<%= singular_table_name.dasherize %>-display" hx-target="this" hx-swap="outerHTML">
+<% attributes.reject(&:password_digest?).each do |attribute| -%>
+    <span class="<%= singular_table_name.dasherize %>-<%= attribute.column_name %>">
+      <%%= <%= singular_table_name %>.<%= attribute.column_name %> %>
+    </span>
+<% end -%>
+
+    <div class="<%= singular_table_name.dasherize %>-actions">
+      <%%= link_to "Edit",
+            edit_<%= singular_route_name %>_path(<%= singular_table_name %>),
+            data: { turbo: false },
+            "hx-get": edit_<%= singular_route_name %>_path(<%= singular_table_name %>),
+            class: "btn btn-sm" %>
+
+      <%%= button_to "Delete",
+            <%= singular_table_name %>,
+            method: :delete,
+            form: {
+              data: { turbo: false },
+              "hx-confirm": "Are you sure?",
+              "hx-target": "closest article",
+              "hx-swap": "delete swap:1s"
+            },
+            class: "btn btn-sm btn-danger" %>
+    </div>
+  </div>
+</article>
