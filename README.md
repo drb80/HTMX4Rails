@@ -51,8 +51,8 @@ Best for: Rails 8 projects, complete setup, one command to run everything.
 
 ```bash
 rails new Todo --css tailwind --skip-action-mailbox --skip-action-mailer
+cd Todo
 git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
-cp -R ../HTMX4Rails/app ../HTMX4Rails/config ../HTMX4Rails/lib .
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
 ./bin/dev
