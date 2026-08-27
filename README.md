@@ -13,7 +13,7 @@ Best for: Learning HTMX/Rails, minimal setup, adding your own CSS later.
 ```bash
 rails new Todo --skip-action-mailbox --skip-action-mailer
 cd Todo
-unzip ~/Downloads/rails_htmx_scaffold_templates.zip
+git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
 rails server
@@ -27,8 +27,7 @@ Best for: Want Tailwind styling out of the box, but managing separate processes.
 
 ```bash
 rails new Todo --css tailwind --skip-action-mailbox --skip-action-mailer
-cd Todo
-unzip ~/Downloads/rails_htmx_scaffold_templates.zip
+git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
 rails server
@@ -52,8 +51,8 @@ Best for: Rails 8 projects, complete setup, one command to run everything.
 
 ```bash
 rails new Todo --css tailwind --skip-action-mailbox --skip-action-mailer
-cd Todo
-unzip ~/Downloads/rails_htmx_scaffold_templates.zip
+git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
+cp -R ../HTMX4Rails/app ../HTMX4Rails/config ../HTMX4Rails/lib .
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
 ./bin/dev
@@ -195,6 +194,24 @@ The generated scaffold controller automatically includes htmx-aware create, upda
 This means the scaffold is fully functional with htmx out of the box—no manual tweaks needed.
 
 ## Tests for TDD
+
+The `htmx_scaffold` generator creates tests for the generated resource:
+
+- Model test: `test/models/<resource>_test.rb`
+- Controller test: `test/controllers/<resources>_controller_test.rb`
+- System test: `test/system/<resources>_test.rb`
+
+Run the model and controller tests with:
+
+```bash
+bin/rails test
+```
+
+Run the browser-based system tests with:
+
+```bash
+bin/rails test:system
+```
 
 The generated tests demonstrate Test-Driven Development:
 

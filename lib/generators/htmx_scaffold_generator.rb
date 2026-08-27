@@ -50,6 +50,14 @@ class HtmxScaffoldGenerator < Rails::Generators::Base
     create_file "app/views/#{plural_name}/_form.html.erb", render_form_partial
   end
 
+  def create_controller_tests
+    generate "test_unit:controller", [plural_name]
+  end
+
+  def create_system_tests
+    generate "test_unit:system", [class_name]
+  end
+
   def create_routes
     route "resources :#{plural_name}"
   end
