@@ -11,9 +11,9 @@ Choose one of three approaches below based on your needs:
 Best for: Learning HTMX/Rails, minimal setup, adding your own CSS later.
 
 ```bash
-rails new Todo --skip-action-mailbox --skip-action-mailer
+rails new Todo --minimal
 cd Todo
-git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
+git pull https://github.com/drb80/HTMX4Rails.git
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
 rails server
