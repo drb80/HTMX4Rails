@@ -6,7 +6,7 @@ This is a starter set of Rails generator template overrides for creating htmx-fr
 
 Choose one of three approaches below based on your needs:
 
-### Approach 1: No CSS (Minimal, focus on HTMX)
+### Approach 1: No CSS
 
 Best for: Learning HTMX/Rails, minimal setup, adding your own CSS later.
 
@@ -19,14 +19,15 @@ rails db:migrate
 rails server
 ```
 
-Visit `http://localhost:3000/items` → plain HTML, no styling. You add CSS as you learn.
+Visit `http://localhost:3000/items` → plain HTML, no styling.
 
 ### Approach 2: Tailwind CSS (Styled, manual compiler)
 
 Best for: Want Tailwind styling out of the box, but managing separate processes.
 
 ```bash
-rails new Todo --css tailwind --skip-action-mailbox --skip-action-mailer
+rails new Todo --css tailwind --minimal
+cd Todo
 git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
@@ -50,9 +51,9 @@ Generator auto-detects Tailwind and applies utility classes to buttons, inputs, 
 Best for: Rails 8 projects, complete setup, one command to run everything.
 
 ```bash
-rails new Todo --css tailwind --skip-action-mailbox --skip-action-mailer
+rails new Todo --css tailwind --minimal
 cd Todo
-git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
+git pull https://github.com/drb80/HTMX4Rails.git
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
 ./bin/dev
