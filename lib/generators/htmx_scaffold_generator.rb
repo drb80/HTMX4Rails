@@ -385,9 +385,11 @@ def render_item_partial
         if input_type == "checkbox"
           "        <div class=\"field\">\n          <label><input type=\"checkbox\" name=\"#{singular_name}[#{name}]\" value=\"1\" /> #{name.titleize}</label>\n        </div>"
         elsif input_type == "textarea"
-          "        <div class=\"field\">\n          <label for=\"#{singular_name}_#{name}\">#{name.titleize}</label>\n          <textarea name=\"#{singular_name}[#{name}]\" id=\"#{singular_name}_#{name}\"#{input_class}></textarea>\n        </div>"
+          "        <div class=\"field\">\n          <label for=\"#{singular_name}_#{name}\">#{name.titleize}</label>\n          <textarea name=\"#{singular_name}[#{name}]\" id=\"#{singular_name}_#{name}\"#{input_class}><%= #{singular_name}.#{name} %></textarea>\n        </div>"
+        elsif input_type == "date"
+          "        <div class=\"field\">\n          <label for=\"#{singular_name}_#{name}\">#{name.titleize}</label>\n          <input type=\"#{input_type}\" name=\"#{singular_name}[#{name}]\" id=\"#{singular_name}_#{name}\" value=\"<%= #{singular_name}.#{name}&.to_date %>\"#{input_class} />\n        </div>"
         else
-          "        <div class=\"field\">\n          <label for=\"#{singular_name}_#{name}\">#{name.titleize}</label>\n          <input type=\"#{input_type}\" name=\"#{singular_name}[#{name}]\" id=\"#{singular_name}_#{name}\"#{input_class} />\n        </div>"
+          "        <div class=\"field\">\n          <label for=\"#{singular_name}_#{name}\">#{name.titleize}</label>\n          <input type=\"#{input_type}\" name=\"#{singular_name}[#{name}]\" id=\"#{singular_name}_#{name}\" value=\"<%= #{singular_name}.#{name} %>\"#{input_class} />\n        </div>"
         end
       end.join("\n")
 
