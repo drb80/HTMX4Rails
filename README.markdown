@@ -28,7 +28,7 @@ Best for: Want Tailwind styling out of the box, but managing separate processes.
 ```bash
 rails new Todo --css tailwind --minimal
 cd Todo
-git clone --depth 1 https://github.com/drb80/HTMX4Rails.git HTMX4Rails
+git pull https://github.com/drb80/HTMX4Rails.git
 rails generate htmx_scaffold Item what when:date
 rails db:migrate
 rails server
