@@ -54,8 +54,14 @@ class HtmxScaffoldGenerator < Rails::Generators::Base
     generate "test_unit:controller", [plural_name]
   end
 
+  # Rails' test_unit:system generator only writes an empty, commented-out
+  # test, so write one that matches the htmx views generated above.
   def create_system_tests
-    generate "test_unit:system", [class_name]
+    base_case = "test/application_system_test_case.rb"
+    unless File.exist?(File.join(destination_root, base_case))
+      create_file base_case, render_application_system_test_case
+    end
+    create_file "test/system/#{plural_name}_test.rb", render_system_test
   end
 
   def create_routes
@@ -150,6 +156,100 @@ class HtmxScaffoldGenerator < Rails::Generators::Base
     else
       ""
     end
+  end
+
+  def render_application_system_test_case
+    <<~RUBY
+      require "test_helper"
+
+      class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+        driven_by :selenium, using: :headless_chrome, screen_size: [ 1400, 1400 ]
+      end
+    RUBY
+  end
+
+  # One line per form field, filled in with the fixture's value. The labels
+  # match render_form_partial: the attribute name, titleized.
+  def system_test_field_lines(record)
+    attributes.map { |attr| attr.split(":") }
+      .reject { |name, _| name == "created_at" || name == "updated_at" }
+      .map do |name, type|
+        label = name.titleize
+        if type == "boolean"
+          "check \"#{label}\" if #{record}.#{name}"
+        else
+          "fill_in \"#{label}\", with: #{record}.#{name}"
+        end
+      end
+  end
+
+  def render_system_test
+    record = "@#{singular_name}"
+    list = "##{plural_name} article"
+    indent = " " * 6
+    fields = system_test_field_lines(record).map { |line| indent + line }.join("\n")
+
+    <<~RUBY
+      require "application_system_test_case"
+
+      class #{class_name.pluralize}Test < ApplicationSystemTestCase
+        setup do
+          #{record} = #{plural_name}(:one)
+          @count = #{class_name}.count
+        end
+
+        test "visiting the index" do
+          visit #{plural_name}_url
+
+          assert_selector "h1", text: "#{class_name.pluralize.titleize}"
+          assert_selector "#{list}", count: @count
+        end
+
+        test "should create #{singular_name.humanize.downcase} without leaving the page" do
+          visit #{plural_name}_url
+
+          within "##{singular_name}_form" do
+      #{fields}
+            click_on "Create"
+          end
+
+          # Waits for htmx to add the new #{singular_name.humanize.downcase} to the list
+          assert_selector "#{list}", count: @count + 1
+          assert_current_path #{plural_name}_path
+        end
+
+        test "should update #{singular_name.humanize.downcase} in place" do
+          visit #{plural_name}_url
+
+          within "#" + dom_id(#{record}) do
+            click_on "Edit"
+      #{fields}
+            click_on "Update"
+          end
+
+          # Waits for htmx to swap the edit form back to the #{singular_name.humanize.downcase}
+          assert_no_selector "##{plural_name} form"
+          assert_selector "#{list}", count: @count
+        end
+
+        test "should destroy #{singular_name.humanize.downcase} after confirming" do
+          visit #{plural_name}_url
+
+          within "#" + dom_id(#{record}) do
+            accept_confirm "Are you sure?" do
+              click_on "Delete"
+            end
+          end
+
+          assert_selector "#{list}", count: @count - 1
+
+          # htmx removes the article whatever the server did, so reload
+          # to check the #{singular_name.humanize.downcase} is really gone
+          visit #{plural_name}_url
+          assert_selector "#{list}", count: @count - 1
+        end
+      end
+    RUBY
   end
 
   def render_controller_template
