@@ -209,7 +209,12 @@ class HtmxScaffoldGenerator < Rails::Generators::Base
               format.json { render json: @#{singular_name}, status: :created }
             end
           else
-            return render partial: "#{plural_name}/form", locals: { #{singular_name}: @#{singular_name} }, status: :unprocessable_entity, layout: false if request.headers["HX-Request"]
+            if request.headers["HX-Request"]
+              # htmx would add the response to the list; put the form (with errors) back in the form container
+              response.headers["HX-Retarget"] = "##{singular_name}_form"
+              response.headers["HX-Reswap"] = "innerHTML"
+              return render partial: "#{plural_name}/form", locals: { #{singular_name}: @#{singular_name} }, status: :unprocessable_entity, layout: false
+            end
 
             respond_to do |format|
               format.html { render :new, status: :unprocessable_entity }
@@ -228,7 +233,12 @@ class HtmxScaffoldGenerator < Rails::Generators::Base
               format.json { render json: @#{singular_name} }
             end
           else
-            return render partial: "#{plural_name}/form", locals: { #{singular_name}: @#{singular_name} }, status: :unprocessable_entity, layout: false if request.headers["HX-Request"]
+            if request.headers["HX-Request"]
+              # Keep the edit form (with errors) inside its <article>, so the next Update still finds "closest article"
+              response.headers["HX-Retarget"] = "#" + helpers.dom_id(@#{singular_name})
+              response.headers["HX-Reswap"] = "innerHTML"
+              return render partial: "#{plural_name}/form", locals: { #{singular_name}: @#{singular_name} }, status: :unprocessable_entity, layout: false
+            end
 
             respond_to do |format|
               format.html { render :edit, status: :unprocessable_entity }

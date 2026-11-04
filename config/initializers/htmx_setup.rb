@@ -39,6 +39,18 @@ Rails.application.config.after_initialize do
       end
     end
 
+    # htmx 2 doesn't swap 4xx/5xx responses, so a 422 with validation errors
+    # would never appear. Swap 422s; keep ignoring other errors.
+    if !content.include?("htmx-config")
+      response_config = <<~HTML
+        <meta name="htmx-config" content='{"responseHandling":[{"code":"204","swap":false},{"code":"[23]..","swap":true},{"code":"422","swap":true},{"code":"[45]..","swap":false,"error":true}]}'>
+      HTML
+      if content.include?("</head>")
+        content.gsub!("</head>", "#{response_config}  </head>")
+        modified = true
+      end
+    end
+
     layout_path.write(content) if modified
   end
 end
