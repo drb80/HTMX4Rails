@@ -6,12 +6,19 @@ This is a starter set of Rails generator template overrides for creating htmx-fr
 
 Choose one of three approaches below based on your needs:
 
+Don't use `rails new --minimal`. It leaves out Capybara and Selenium (needed
+for system tests) and Brakeman, RuboCop, and bundler-audit. The full app
+also includes Turbo. htmx handles the generated forms and buttons itself,
+so each sends one request. If you add `hx-boost` (for example, to tabs),
+also add `data-turbo="false"` to that element, or Turbo and htmx will both
+fetch every link.
+
 ### Approach 1: No CSS
 
 Best for: Learning HTMX/Rails, minimal setup, adding your own CSS later.
 
 ```bash
-rails new Todo --minimal
+rails new Todo
 cd Todo
 git pull https://github.com/drb80/HTMX4Rails.git
 rails generate htmx_scaffold Item what when:date
@@ -26,7 +33,7 @@ Visit `http://localhost:3000/items` → plain HTML, no styling.
 Best for: Want Tailwind styling out of the box, but managing separate processes.
 
 ```bash
-rails new Todo --css tailwind --minimal
+rails new Todo --css tailwind
 cd Todo
 git pull https://github.com/drb80/HTMX4Rails.git
 rails generate htmx_scaffold Item what when:date
@@ -51,7 +58,7 @@ Generator auto-detects Tailwind and applies utility classes to buttons, inputs, 
 Best for: Rails 8 projects, complete setup, one command to run everything.
 
 ```bash
-rails new Todo --css tailwind --minimal
+rails new Todo --css tailwind
 cd Todo
 git pull https://github.com/drb80/HTMX4Rails.git
 rails generate htmx_scaffold Item what when:date
